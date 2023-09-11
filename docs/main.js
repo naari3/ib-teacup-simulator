@@ -37,7 +37,6 @@ class Entity {
     return false;
   }
 
-
   tick(ctx, entities) {
     throw new Error("draw method is not implemented");
   }
@@ -68,7 +67,6 @@ class Player extends Entity {
     }
     return super.checkCollision(entities, x, y, StablePot);
   }
-
 
   tick(ctx, entities) {
     if (this.directionFrame % 5 === 0) {
@@ -208,6 +206,26 @@ class TeaCup extends Entity {
     this.y = y;
     return moved;
   }
+
+  checkSetToStablePot(entities) {
+    for (let entity of entities) {
+      if (entity instanceof StablePot) {
+        if (entity.x === this.x && entity.y === this.y - 1) {
+          return true;
+        }
+        if (entity.x === this.x && entity.y === this.y + 1) {
+          return true;
+        }
+        if (entity.x === this.x - 1 && entity.y === this.y) {
+          return true;
+        }
+        if (entity.x === this.x + 1 && entity.y === this.y) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }
 
 const init = () => {
@@ -215,6 +233,7 @@ const init = () => {
   const ctx = canvas.getContext("2d");
 
   let entities = [];
+  let cleared = false;
 
   let player = new Player(0, 0);
   entities.push(player);
@@ -222,10 +241,14 @@ const init = () => {
   entities.push(new StablePot(5, 1, "blue"));
   entities.push(new StablePot(1, 2, "yellow"));
   entities.push(new StablePot(3, 7, "green"));
-  entities.push(new TeaCup(3, 2, "red"));
-  entities.push(new TeaCup(2, 4, "blue"));
-  entities.push(new TeaCup(6, 5, "yellow"));
-  entities.push(new TeaCup(5, 4, "green"));
+  let redCup = new TeaCup(3, 2, "red");
+  let blueCup = new TeaCup(2, 4, "blue");
+  let yellowCup = new TeaCup(6, 5, "yellow");
+  let greenCup = new TeaCup(5, 4, "green");
+  entities.push(redCup);
+  entities.push(blueCup);
+  entities.push(yellowCup);
+  entities.push(greenCup);
 
   document.addEventListener("keydown", (event) => {
     switch (event.key) {
@@ -254,6 +277,20 @@ const init = () => {
       entity.tick(ctx, entities);
       entity.draw(ctx);
     });
+    if (
+      !cleared &&
+      redCup.checkSetToStablePot(entities) &&
+      blueCup.checkSetToStablePot(entities) &&
+      yellowCup.checkSetToStablePot(entities) &&
+      greenCup.checkSetToStablePot(entities)
+    ) {
+      cleared = true;
+    }
+    if (cleared) {
+      ctx.fillStyle = "white";
+      ctx.font = "bold 50px sans-serif";
+      ctx.fillText("Cleared!", 100, 100);
+    }
     requestAnimationFrame(tick);
   };
   tick();
