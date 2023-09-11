@@ -1,0 +1,17 @@
+{
+  "name": "ib-teacup-simulator",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "serve public"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}
